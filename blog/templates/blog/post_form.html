@@ -1,6 +1,6 @@
 {% extends 'blog/base.html' %}
 
-{% block content_title %}Post Update/Create View{% endblock%}
+{% block content_title %}Post Update / Create View{% endblock%}
 
 {% block inner_content %}
   <form class="form-group" method="post">
@@ -8,9 +8,9 @@
     {{ form }}
     <button class="btn btn-primary" type="submit">OK</button>
     {% if post %}
-      <a class="btn btn-secondary ml-3" href="{% url 'post_detail' post.id %}">Cancel</a>
+      <a class="btn btn-secondary ml-2" href="{% url 'post_detail' post.id %}">Cancel</a>
     {% else %}
-      <a class="btn btn-secondary ml-3" href="{% url 'post_list' %}">Cancel</a>
+      <a class="btn btn-secondary ml-2" href="{% url 'post_list' %}">Cancel</a>
     {% endif %}
   </form>
 {% endblock inner_content %}
