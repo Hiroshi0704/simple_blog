@@ -17,7 +17,9 @@ def comment_delete(request, pk):
 
 class PostListView(ListView):
     model = Post
-
+    paginate_by = 8
+    ordering = ['-create_at']
+    
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post

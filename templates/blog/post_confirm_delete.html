@@ -1,5 +1,9 @@
 {% extends 'blog/base.html' %}
 
+{% block title %}
+  Delete - {{ block.super }}
+{% endblock %}
+
 {% block content_title %}Post Delete View{% endblock%}
 
 {% block inner_content %}
@@ -7,6 +11,6 @@
     {% csrf_token %}
     <p>Are you sure to delete "{{ post.title }}"?</p>
     <button class="btn btn-danger" type="submit">Confirm</button>
-    <a class="btn btn-secondary ml-3" href="{% url 'post_detail' post.id %}">Cancel</a>
+    <a class="btn btn-secondary ml-2" href="{% url 'post_detail' post.id %}">Cancel</a>
   </form>
 {% endblock inner_content %}

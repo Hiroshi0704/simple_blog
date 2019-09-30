@@ -1,5 +1,9 @@
 {% extends 'blog/base.html' %}
 
+{% block title %}
+  Detail - {{ block.super }}
+{% endblock %}
+
 {% block content_title %}Post Detail View{% endblock%}
 
 {% block inner_content %}
@@ -19,7 +23,7 @@
       
       <!-- Comment -->
       {% if is_user %}
-      <form class="form-group" method="post">
+      <form class="form-group font-italic" method="post">
         {% csrf_token %}
         {{ form }}
         <button class="btn btn-primary" type="submit">OK</button>
@@ -39,11 +43,6 @@
         </li>
         {% endfor %}
       </ul>
-
-      <nav class="blog-pagination mt-3">
-        <a class="btn btn-outline-primary" href="#">Older</a>
-        <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Newer</a>
-      </nav>
 
     </div><!-- /.blog-main -->
 
