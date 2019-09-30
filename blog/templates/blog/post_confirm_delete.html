@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+
+{% block content_title %}Post Delete View{% endblock%}
+
+{% block inner_content %}
+  <form class="form-group" method="post">
+    {% csrf_token %}
+    <p>Are you sure to delete "{{ post.title }}"?</p>
+    <button class="btn btn-danger" type="submit">Confirm</button>
+    <a class="btn btn-secondary ml-3" href="{% url 'post_detail' post.id %}">Cancel</a>
+  </form>
+{% endblock inner_content %}
