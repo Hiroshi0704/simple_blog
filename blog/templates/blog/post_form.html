@@ -9,7 +9,7 @@
     <button class="btn btn-primary" type="submit">OK</button>
     {% if post %}
       <a class="btn btn-secondary ml-2" href="{% url 'post_detail' post.id %}">Cancel</a>
-    {% else %}
+    {% else %} 
       <a class="btn btn-secondary ml-2" href="{% url 'post_list' %}">Cancel</a>
     {% endif %}
   </form>
