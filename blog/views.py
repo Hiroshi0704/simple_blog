@@ -11,14 +11,14 @@ from .forms import PostModelForm, CommentModelForm
 def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     post_pk = comment.post.id
-    comment.delete()
+    if comment.author == request.user:
+        comment.delete()
     return redirect('post_detail', pk=post_pk)
 
 
 class PostListView(ListView):
     model = Post
     paginate_by = 8
-    ordering = ['-create_at']
     
 
 class PostCreateView(LoginRequiredMixin, CreateView):

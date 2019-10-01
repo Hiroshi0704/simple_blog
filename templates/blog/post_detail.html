@@ -10,8 +10,10 @@
   <div class="row">
     <div class="col-md-8 blog-main">
       <h3 class="pb-4 mb-4 font-italic border-bottom">
+        {% if post.author == user %}
         <a class="btn btn-outline-primary" href="{% url 'post_update' post.id %}">Edit</a>
         <a class="btn btn-outline-danger" href="{% url 'post_delete' post.id %}">Delete</a>
+        {% endif %}
       </h3>
       <div class="blog-post">
         <h2 class="blog-post-title">{{ post.title }}</h2>
@@ -36,7 +38,9 @@
         <li class="list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1 small">{{ comment.create_at }} by {{ comment.author }}</h5>
-            <a class="badge badge-light comment" href="{% url 'comment_delete' comment.id %}">Delete</a>
+            {% if comment.author == user %}
+              <a class="badge badge-light comment" href="{% url 'comment_delete' comment.id %}" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+            {% endif %}
           </div>
           <p class="mb-1">{{ comment }}</p>
           <small>Donec id elit non mi porta.</small>
@@ -82,15 +86,3 @@
 
   </div><!-- /.row -->
 {% endblock inner_content %}
-
-
-{% block extrascript %}
-  <script type="text/javascript">
-    var comments = document.querySelectorAll('.comment');
-    for (var i = comments.length - 1; i >= 0; i--) {
-      comments[i].addEventListener('click', function() {
-        return confirm('Are you sure you want to delete this?');
-      });
-    }
-  </script>
-{% endblock %}
