@@ -36,7 +36,8 @@ class PostDetailView(ModelFormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['comment_list'] = Comment.objects.filter(post=self.object)
+        comment_list = Comment.objects.filter(post=self.object)
+        context['comment_list'] = comment_list
         context['is_user'] = get_user_model().objects.filter(id=self.request.user.id)
         return context
 

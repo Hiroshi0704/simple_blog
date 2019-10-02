@@ -27,6 +27,8 @@ def create_post_model(num):
     for i in range(num):
         title = fakergen.word()
         body = fakergen.text()
+        for _ in range(3):
+            body += ' ' + fakergen.text()
         author = random.choice(user.objects.all())
         Post.objects.get_or_create(title=title, body=body, author=author)
 
