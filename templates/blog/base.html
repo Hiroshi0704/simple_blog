@@ -10,24 +10,30 @@
 {% block header %}
   <div class="container">
     <header class="blog-header py-3">
-      <div class="row flex-nowrap justify-content-between align-items-center">
-        <div class="col-4 pt-1">
-          <a class="text-muted" href="{% url 'post_create' %}">+ New</a>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+        <a class="navbar-brand blog-header-logo text-dark" href="{% url 'post_list' %}">Simple Blog</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample09">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'post_create' %}">+New</a>
+            </li>
+            <li class="nav-item">
+            {% if user.is_authenticated %}
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            {% endif %}
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-md-0" action="{% url 'post_list' %}" method="post">
+            {% csrf_token %}
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" name="search" value="{{ request.session.search_value }}">
+          </form>
         </div>
-        <div class="col-4 text-center">
-          <a class="blog-header-logo text-dark" href="{% url 'post_list' %}">Simple Blog</a>
-        </div>
-        <div class="col-4 d-flex justify-content-end align-items-center">
-          <a class="text-muted" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
-          </a>
-          {% if user.is_authenticated %}
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}">Logout</a>
-          {% else %}
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'login' %}">Login</a>
-          {% endif %}
-        </div>
-      </div>
+      </nav>
     </header>
   </div>
 {% endblock header %}

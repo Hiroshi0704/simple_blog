@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView, ModelFormMixin
+from django.db.models import Q
 from .models import Post, Comment
 from .forms import PostModelForm, CommentModelForm
 
@@ -19,6 +20,29 @@ def comment_delete(request, pk):
 class PostListView(ListView):
     model = Post
     paginate_by = 8
+
+    def post(self, request, *args, **kwargs):
+        request.session['search_value'] = request.POST.get('search', None)
+        request.GET = request.GET.copy()
+        request.GET.clear()
+        return self.get(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        search_value = ''
+        if 'search_value' in self.request.session:
+            search_value = self.request.session['search_value']
+        context['search_value'] = search_value
+        return context
+
+    def get_queryset(self):
+        queryset = super(PostListView, self).get_queryset()
+
+        if 'search_value' in self.request.session:
+            keyword = self.request.session['search_value'].split(' ')
+            for key in keyword:
+                queryset = queryset.filter(Q(title__icontains=key) | Q(body__icontains=key))
+        return queryset
     
 
 class PostCreateView(LoginRequiredMixin, CreateView):
