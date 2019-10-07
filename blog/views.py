@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView
@@ -36,12 +37,12 @@ class PostListView(ListView):
         return context
 
     def get_queryset(self):
-        queryset = super(PostListView, self).get_queryset()
+        queryset = super(PostListView, self).get_queryset().select_related('author')
 
         if 'search_value' in self.request.session:
             keyword = self.request.session['search_value'].split(' ')
             for key in keyword:
-                queryset = queryset.filter(Q(title__icontains=key) | Q(body__icontains=key))
+                queryset = queryset.filter(Q(title__icontains=key) | Q(body__icontains=key) | Q(author__username__icontains=key))
         return queryset
     
 
@@ -51,6 +52,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        messages.success(self.request, f'"{form.instance.title}" has been created!')
         return super().form_valid(form)
 
 
@@ -88,6 +90,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         obj = self.get_object()
         return obj.author == self.request.user
 
+    def form_valid(self, form):
+        messages.info(self.request, f'"{form.instance.title}" has been updated!')
+        return super().form_valid(form)
+
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model       = Post
@@ -97,3 +103,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         obj = self.get_object()
         return obj.author == self.request.user
 
+    def delete(self, request, *args, **kwargs):
+        result = super().delete(request, *args, **kwargs)
+        message = f'"{self.object.title}" has been deleted.'
+        messages.warning(request, message)
+        return result
