@@ -17,7 +17,7 @@
           {% endif %}
           <h3 class="mb-0">{{ post.title }}</h3>
           <div class="mb-1 text-muted small">{{ post.get_create_at }} by {{ post.author }}</div>
-          <p class="card-text mb-auto">{{ post.body|truncatechars:100 }}</p>
+          <p class="card-text mb-auto">{{ post.body|truncatechars_html:128 }}</p>
           <a href="{% url 'post_detail' post.id %}" class="stretched-link">Continue reading</a>
         </div>
       </div>
