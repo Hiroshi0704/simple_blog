@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import Post, Comment
 from .forms import PostModelForm, CommentModelForm
 
+User = get_user_model()
 
 def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
@@ -23,8 +24,6 @@ class PostListView(ListView):
 
     def post(self, request, *args, **kwargs):
         request.session['search_value'] = request.POST.get('search', None)
-        request.GET = request.GET.copy()
-        request.GET.clear()
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -62,7 +61,7 @@ class PostDetailView(ModelFormMixin, DetailView):
         context = super().get_context_data(*args, **kwargs)
         comment_list = Comment.objects.filter(post=self.object)
         context['comment_list'] = comment_list
-        context['is_user'] = get_user_model().objects.filter(id=self.request.user.id)
+        context['is_user'] = User.objects.filter(id=self.request.user.id)
         return context
 
     def form_valid(self, form):
@@ -74,7 +73,7 @@ class PostDetailView(ModelFormMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        if form.is_valid() and get_object_or_404(get_user_model(), pk=request.user.id):
+        if form.is_valid() and get_object_or_404(User, pk=request.user.id):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
