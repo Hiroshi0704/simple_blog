@@ -11,8 +11,8 @@ class BaseTestPostView(TestCase):
     def setUpTestData(cls):
         for i in range(5):
             user = User.objects.create(
-                username=f'user{i+1}',
-                email=f'user{i+1}@exmaple.com',
+                username=f'user{i}',
+                email=f'user{i}@exmaple.com',
             )
             user.set_password('pass12345')
             user.save()
@@ -24,9 +24,6 @@ class BaseTestPostView(TestCase):
                 body=f'body{i}',
                 author=User.objects.get(pk=i+1)
             )
-
-        # print(User.objects.all())
-        # print(Post.objects.all())
 
 
 class TestPostListView(BaseTestPostView):
@@ -103,7 +100,7 @@ class TestPostCreateView(BaseTestPostView):
         })
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['form'].is_valid())
-        self.assertFormError(response, 'form', 'title', 'このフィールドは必須です。')
+        self.assertFormError(response, 'form', 'title', 'This field is required.')
 
 
     def test_post_without_body(self):
@@ -117,15 +114,30 @@ class TestPostCreateView(BaseTestPostView):
         })
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['form'].is_valid())
-        self.assertFormError(response, 'form', 'body', 'このフィールドは必須です。')
+        self.assertFormError(response, 'form', 'body', 'This field is required.')
 
 
 
-class TestPostDeleteView(BaseTestPostView):
+class TestPostDeleteView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create(username='testuser', email='test@example.com')
+        user.set_password('pass12345')
+        user.save()
+
+        Post.objects.create(
+            title='testtitle',
+            body='testbody',
+            author=user
+        )
+        
+
+
 
     def setUp(self):
-        self.post = Post.objects.get(pk=1)
-        self.user = User.objects.get(pk=1)
+        self.user = User.objects.get(username='testuser')
+        self.post = Post.objects.get(author=self.user)
 
     def test_get_success(self):
         logged_in = self.client.login(username=self.user.username, password='pass12345')
@@ -141,7 +153,14 @@ class TestPostDeleteView(BaseTestPostView):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/users/login/?next=/blog/1/delete/')
 
-    def test_get_not_own_post(self):
+    def test_get_by_other_user(self):
         logged_in = self.client.login(username=self.user.username, password='pass12345')
         response = self.client.get('blog/2/delete')
         self.assertEqual(response.status_code, 404)
+
+    def test_post_success(self):
+        logged_in = self.client.login(username=self.user.username, password='pass12345')
+        self.assertTrue(logged_in)
+        response = self.client.post(f'/blog/{self.post.id}/delete/')
+        self.assertRedirects(response, '/blog/list/')
+        self.assertFalse(Post.objects.filter(id=self.post.id).exists())
