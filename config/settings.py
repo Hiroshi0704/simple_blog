@@ -125,3 +125,37 @@ STATICFILES_DIRS  = [os.path.join(BASE_DIR, 'static')]
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'post_list'
 LOGOUT_REDIRECT_URL = 'post_list'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'develop': {
+            'format': '%(asctime)s [%(levelname)s] %(pathname)s: %(lineno)d %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'develop',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,        
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,        
+        },        
+    }
+}

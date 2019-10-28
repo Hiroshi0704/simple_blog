@@ -31,7 +31,7 @@ class PostListView(ListView):
         context = super().get_context_data(*args, **kwargs)
         search_value = ''
         if 'search_value' in self.request.session:
-            search_value = self.request.session['search_value']
+            search_value = self.request.session['search_value'].strip()
         context['search_value'] = search_value
         return context
 
@@ -39,7 +39,7 @@ class PostListView(ListView):
         queryset = super(PostListView, self).get_queryset().select_related('author')
 
         if 'search_value' in self.request.session:
-            keyword = self.request.session['search_value'].split(' ')
+            keyword = self.request.session['search_value'].strip().split(' ')
             for key in keyword:
                 queryset = queryset.filter(Q(title__icontains=key) | Q(body__icontains=key) | Q(author__username__icontains=key))
         return queryset
