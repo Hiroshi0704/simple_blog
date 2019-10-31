@@ -2,8 +2,6 @@ from .base import *
 
 DEBUG = True
 
-SECRET_KEY = 'hq85x9u(jq-0ni__(*je%g*vfeq2s=y6dmw_dcun)l5hs^i*0x'
-
 ALLOWED_HOSTS = ['*']
 
 DATABASES = {
